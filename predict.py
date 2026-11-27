@@ -53,6 +53,7 @@ def save_results(source, pipeline, features):
             suffix += 1
 
     (destination / "explanations").mkdir()
+    print(f"Salvando {len(graphs)} gráficos SHAP...", flush=True)
     for i, graph in enumerate(graphs):
         shap.plots.waterfall(explanations[i], max_display=10, show=False)
         plt.savefig(destination / graph, dpi=150, bbox_inches="tight")
@@ -66,7 +67,7 @@ def main():
     parser.add_argument("csv", type=Path, help="Arquivo CSV com os dados de entrada.")
     args = parser.parse_args()
     if not args.csv.is_file():
-        parser.error(f"CSV não encontrado: {args.csv}")
+        parser.exit(2, f"{parser.prog}: error: CSV não encontrado: {args.csv}\n")
 
     try:
         features = prepare_inputs(pd.read_csv(args.csv, encoding="utf-8-sig"))
@@ -75,13 +76,14 @@ def main():
                 columns = ", ".join(features.columns[missing])
                 raise ValueError(f"Registro {record} com campos ausentes: {columns}")
     except (ValueError, TypeError) as error:
-        parser.error(str(error))
+        parser.exit(2, f"{parser.prog}: error: {error}\n")
 
     if not MODEL_PATH.is_file():
         train_model()
     with MODEL_PATH.open("rb") as file:
         pipeline = pickle.load(file)
     plt.switch_backend("Agg")
+    print(f"Gerando previsões para {len(features)} registros...", flush=True)
     output = save_results(args.csv, pipeline, features)
     print(f"{len(features)} registros processados. Resultados em {output}.")
 

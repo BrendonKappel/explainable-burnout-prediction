@@ -2,5 +2,5 @@
 __pycache__/
 .env
 AGENTS.md
-burnout_model.pkl
+models/
 outputs/

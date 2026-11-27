@@ -7,7 +7,7 @@ from xgboost import XGBClassifier
 from preprocess import MODEL_PATH, PROJECT_DIR, build_preprocessor, prepare_inputs
 
 
-DATA_PATH = PROJECT_DIR / "data" / "denning_dataset.csv"
+DATA_PATH = PROJECT_DIR / "data" / "training" / "denning_dataset.csv"
 TARGET_MAPPING = {0: 0, 1: 0, 2: 0, 3: 1}
 
 
@@ -34,9 +34,11 @@ def main():
     if target.isna().any():
         raise ValueError("Burnout? contém ausências ou valores fora de 0, 1, 2 e 3.")
 
+    print("Treinando o modelo...", flush=True)
     pipeline = build_pipeline().fit(features, target.astype("Int64"))
+    MODEL_PATH.parent.mkdir(exist_ok=True)
     MODEL_PATH.write_bytes(pickle.dumps(pipeline, protocol=pickle.HIGHEST_PROTOCOL))
-    print(f"Modelo treinado com {len(features)} registros. Arquivo salvo em {MODEL_PATH}.")
+    print(f"Modelo salvo em {MODEL_PATH.relative_to(PROJECT_DIR).as_posix()}.")
 
 
 if __name__ == "__main__":

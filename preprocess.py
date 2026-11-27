@@ -10,7 +10,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 
 PROJECT_DIR = Path(__file__).resolve().parent
-MODEL_PATH = PROJECT_DIR / "burnout_model.pkl"
+MODEL_PATH = PROJECT_DIR / "models" / "burnout_model.pkl"
 
 REDEPLOYMENT_COLUMN = "Have you been redeployed to a different area, hospital, or specialty?"
 DESTINATION_COLUMN = "If so, to which specialty or area have you been redeployed?"
